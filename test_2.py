@@ -1,5 +1,6 @@
 
-a = ([1, 2, 10, 5], ['a', 'b'], 4)
+a = "500,10"
+c = 73.2
 
-for i in range(len(a[1])):
-    print(a[1][i])
+b = float(a.split(',')[0]) * 1.2 * c
+print(b)

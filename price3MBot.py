@@ -3,6 +3,7 @@ from pycbrf import ExchangeRates
 import telebot
 from telebot import apihelper
 
+
 port = '7777'
 usernameProxy = 'tg-id415061327'
 passwordProxy = 'vjzTxv7v'
@@ -21,8 +22,8 @@ def indexing(search):
     file = 'db_1.xlsx'
     wb1 = load_workbook(filename=file)
     ws1 = wb1['price']
-    rates = ExchangeRates('2019-06-21', locale_en=True)
-    curse_eur = rates['EUR'].value
+    rates = ExchangeRates('2019-06-24', locale_en=True)
+    curse_eur = float(rates['EUR'].value)
 
     # Поиск по ключам
     search = search.split()
@@ -38,10 +39,16 @@ def indexing(search):
             tru_or_not_tru.append(search_i in ws1['w' + str(row_i + 2)].value)
 
         if not False in tru_or_not_tru:
+
             number_of_index += 1
+
             name_of_search.append('№' + str(number_of_index) + '. ' + str(ws1['f' + str(row_i + 2)].value))
-            cost_of_search.append('Стоимость - ' + str(ws1['j' + str(row_i + 2)].value) + ' EUR')
-            date_of_search.append('Срок поставки - ' + str(ws1['q' + str(row_i + 2)].value) + ' дней до 3М в России')
+
+            cost_tmp = str(ws1['j' + str(row_i + 2)].value).split(',')
+            cost_tmp = round(float(cost_tmp[0]) * 1.2 * curse_eur, 2)
+            cost_of_search.append('Стоимость - ' + str(cost_tmp) + ' руб. с НДС (20%)')
+
+            date_of_search.append('Статус товара на складе 3М Россия - ' + str(ws1['l' + str(row_i + 2)].value))
 
     return name_of_search, cost_of_search, date_of_search, number_of_index
 
