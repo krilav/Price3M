@@ -1,3 +1,4 @@
+# bot.py
 
 import math
 import pyowm
@@ -13,7 +14,7 @@ addressProxy = '@ru.socksy.seriyps.ru'
 
 apihelper.proxy = {'''https':'socks5://''' + usernameProxy + ':' + passwordProxy + addressProxy + ':' + port}
 
-TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk'
+TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"
 
 bot = telebot.TeleBot(TOKEN)
 

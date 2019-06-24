@@ -93,12 +93,12 @@ curse_test_eur = rates['EUR'].value
 
 # ws2 = wb1.create_sheet(title='data2')
 
-search_test = '5952'
+search_test = '550 600'
 
 discount = 0.2
 
 # new_data(curse_test_eur)
-print(indexing(search_test))
+print(indexing(search_test)[0][0])
 
 print(ws1.max_row)
 # print(ws1.max_column)

@@ -1,4 +1,4 @@
 
 
-worker: python PogodaBot.py $PORT
+worker: python price3MBot.py $PORT
 
