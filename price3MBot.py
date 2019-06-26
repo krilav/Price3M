@@ -63,8 +63,9 @@ def indexing(search):
 # Команды '/start' и '/help'.
 @bot.message_handler(commands=['start', 'help'])
 def start_help(message):
-    bot.send_message(message.chat.id, '''Правила поиска по прайсу : 1. Регистр не учитывается. 2. Поииск идет по 
-    ключевым словам, которые нужно вводить через пробел. ''')
+    bot.send_message(message.chat.id, '''Правила поиска по прайсу : 
+    1. Регистр не учитывается. 
+    2. Поииск идет по ключевым словам, которые нужно вводить через пробел. ''')
 
 
 # Поиск по прайсу
