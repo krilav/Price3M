@@ -1,6 +1,6 @@
 
-a = "500,10"
+a = "ПРивет Vtldtl"
 c = 73.2
 
-b = float(a.split(',')[0]) * 1.2 * c
+b = a.lower()
 print(b)
