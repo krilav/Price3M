@@ -58,8 +58,8 @@ def new_data(curse_eur=0):
         except:
             continue
 
-    # Разделение статуса и срока.
 
+# Разделение статуса и срока.
 
 def indexing(search='_'):
     """Поиск нужных позиций."""

@@ -12,6 +12,8 @@ addressProxy = '@socksy.seriyps.ru'
 apihelper.proxy = {'https': 'socks5://' + usernameProxy + ':' + passwordProxy + addressProxy + ':' + port}
 
 TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk'
+# TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"
+
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -23,7 +25,7 @@ def indexing(search):
     file = 'db_1.xlsx'
     wb1 = load_workbook(filename=file)
     ws1 = wb1['price']
-    rates = ExchangeRates('2019-06-25', locale_en=True)
+    rates = ExchangeRates('2019-07-01', locale_en=True)
 
     # Поиск по ключам
     search = search.lower()
@@ -50,10 +52,16 @@ def indexing(search):
             name_of_search.append('№' + str(number_of_index) + '. ' + str(ws1['f' + str(row_i + 2)].value))
 
             cost_tmp = str(ws1['j' + str(row_i + 2)].value).split(',')
-            cost_tmp = round(float(cost_tmp[0]) * 1.2 * curse_eur, 2)
-            cost_of_search.append('Стоимость - {0} руб. с НДС или {1} EUR Без НДС'.format(str(cost_tmp), ws1['j' +
-                                                                                                             str(
-                                                                                                                 row_i + 2)].value))
+            cost_tmp_rub = round(float(cost_tmp[0]) * 1.2 * curse_eur, 2)
+            cost_tmp_opt_rub = round(cost_tmp_rub * 0.85, 2)
+            cost_tmp_opt = round(cost_tmp_opt_rub / curse_eur, 2)
+            cost_tmp_kopt_rub = round(cost_tmp_rub * 0.71, 2)
+            cost_tmp_kopt = round(cost_tmp_kopt_rub / curse_eur, 2)
+            cost_of_search.append('''Прайсов цена  -  {0}  руб. с НДС или  {1}  EUR Без НДС\
+                Оптовая цена  -  {2}  руб. с НДС или  {3}  EUR Без НДС\
+                Крупнооптовая цена  -  {4}  руб. с НДС или  {5}  EUR Без НДС'''
+                                  .format(str(cost_tmp_rub), cost_tmp[0], str(cost_tmp_opt_rub),
+                                          str(cost_tmp_opt), str(cost_tmp_kopt_rub), str(cost_tmp_kopt)))
 
             date_of_search.append('Статус товара на складе 3М Россия - ' + str(ws1['l' + str(row_i + 2)].value))
 
@@ -65,7 +73,8 @@ def indexing(search):
 def start_help(message):
     bot.send_message(message.chat.id, '''Правила поиска по прайсу : 
     1. Регистр не учитывается. 
-    2. Поииск идет по ключевым словам, которые нужно вводить через пробел. ''')
+    2. Поиск идет по ключевым словам, которые нужно вводить
+       через пробел. ''')
 
 
 # Поиск по прайсу
