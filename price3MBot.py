@@ -74,6 +74,8 @@ def indexing(search):
 # Команды '/start' и '/help'.
 @bot.message_handler(commands=['start', 'help'])
 def start_help(message):
+    date_of_search = str(datetime.date.today() - timedelta(1))
+    rates = ExchangeRates(date_of_search, locale_en=True)
     if message.text == '/start':
         bot.send_message(message.chat.id, '''Правила поиска по прайсу :
         1. Регистр не учитывается.
@@ -83,7 +85,8 @@ def start_help(message):
         bot.send_message(message.chat.id, '''Типы цен :
         1. Прайсовая цена - цена без скидки.
         2. Оптовая цена - цена при обороте от 500 € в квартал (-15%)
-        3. Крупнооптовая цена - цена при обороте от 1000 € в квартал (-29%) ''')
+        3. Крупнооптовая цена - цена при обороте от 1000 € в квартал (-29%) \n
+         Расчетный курс Евро = {}'''.format(rates['EUR'].value))
 
 
 # Поиск по прайсу
