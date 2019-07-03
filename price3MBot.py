@@ -1,7 +1,10 @@
+import datetime
+
 from openpyxl import load_workbook
 from pycbrf import ExchangeRates
 import telebot
 from telebot import apihelper
+from datetime import timedelta
 from telebot import types
 
 port = '7777'
@@ -14,7 +17,6 @@ apihelper.proxy = {'https': 'socks5://' + usernameProxy + ':' + passwordProxy + 
 TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk'
 # TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"
 
-
 bot = telebot.TeleBot(TOKEN)
 
 
@@ -25,7 +27,8 @@ def indexing(search):
     file = 'db_1.xlsx'
     wb1 = load_workbook(filename=file)
     ws1 = wb1['price']
-    rates = ExchangeRates('2019-07-01', locale_en=True)
+    date_of_search = str(datetime.date.today() - timedelta(1))
+    rates = ExchangeRates(date_of_search, locale_en=True)
 
     # Поиск по ключам
     search = search.lower()
@@ -34,7 +37,7 @@ def indexing(search):
     number_of_index = 0
     name_of_search = []
     cost_of_search = []
-    date_of_search = []
+    status_of_search = []
 
     for row_i in range(ws1.max_row - 1):
         tru_or_not_tru = []
@@ -57,24 +60,30 @@ def indexing(search):
             cost_tmp_opt = round(cost_tmp_opt_rub / curse_eur, 2)
             cost_tmp_kopt_rub = round(cost_tmp_rub * 0.71, 2)
             cost_tmp_kopt = round(cost_tmp_kopt_rub / curse_eur, 2)
-            cost_of_search.append('''Прайсов цена  -  {0}  руб. с НДС или  {1}  EUR Без НДС\
+            cost_of_search.append('''Прайсовая цена  -  {0}  руб. с НДС или  {1}  EUR Без НДС\
                 Оптовая цена  -  {2}  руб. с НДС или  {3}  EUR Без НДС\
                 Крупнооптовая цена  -  {4}  руб. с НДС или  {5}  EUR Без НДС'''
                                   .format(str(cost_tmp_rub), cost_tmp[0], str(cost_tmp_opt_rub),
                                           str(cost_tmp_opt), str(cost_tmp_kopt_rub), str(cost_tmp_kopt)))
 
-            date_of_search.append('Статус товара на складе 3М Россия - ' + str(ws1['l' + str(row_i + 2)].value))
+            status_of_search.append('Статус товара на складе 3М Россия - ' + str(ws1['l' + str(row_i + 2)].value))
 
-    return name_of_search, cost_of_search, date_of_search, number_of_index
+    return name_of_search, cost_of_search, status_of_search, number_of_index
 
 
 # Команды '/start' и '/help'.
 @bot.message_handler(commands=['start', 'help'])
 def start_help(message):
-    bot.send_message(message.chat.id, '''Правила поиска по прайсу : 
-    1. Регистр не учитывается. 
-    2. Поиск идет по ключевым словам, которые нужно вводить
-       через пробел. ''')
+    if message.text == '/start':
+        bot.send_message(message.chat.id, '''Правила поиска по прайсу :
+        1. Регистр не учитывается.
+        2. Поиск идет по ключевым словам, которые нужно вводить
+        через пробел. ''')
+    elif message.text == '/help':
+        bot.send_message(message.chat.id, '''Типы цен :
+        1. Прайсовая цена - цена без скидки.
+        2. Оптовая цена - цена при обороте от 500 € в квартал (-15%)
+        3. Крупнооптовая цена - цена при обороте от 1000 € в квартал (-29%) ''')
 
 
 # Поиск по прайсу
