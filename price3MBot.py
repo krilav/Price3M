@@ -14,8 +14,8 @@ addressProxy = '@socksy.seriyps.ru'
 
 apihelper.proxy = {'https': f'socks5://{usernameProxy}:{passwordProxy}{addressProxy}:{port}'}
 
-# TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk'
-TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"
+TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk'
+# TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"
 
 bot = telebot.TeleBot(TOKEN)
 
