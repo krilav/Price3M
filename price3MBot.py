@@ -60,9 +60,9 @@ def indexing(search):
             cost_tmp_opt = round(cost_tmp_opt_rub / curse_eur, 2)
             cost_tmp_kopt_rub = round(cost_tmp_rub * 0.71, 2)
             cost_tmp_kopt = round(cost_tmp_kopt_rub / curse_eur, 2)
-            cost_of_search.append('''Прайсовая цена  -  {0}  руб. с НДС или  {1}  EUR Без НДС\
-                Оптовая цена  -  {2}  руб. с НДС или  {3}  EUR Без НДС\
-                Крупнооптовая цена  -  {4}  руб. с НДС или  {5}  EUR Без НДС'''
+            cost_of_search.append('''\n 1. Прайсовая цена  -  {0:<}  руб. с НДС или  {1}  EUR Без НДС
+                \n 2. Оптовая цена  -  {2:>5}  руб. с НДС или  {3}  EUR Без НДС
+                \n 3. Крупнооптовая цена  -  {4}  руб. с НДС или  {5}  EUR Без НД'''
                                   .format(str(cost_tmp_rub), cost_tmp[0], str(cost_tmp_opt_rub),
                                           str(cost_tmp_opt), str(cost_tmp_kopt_rub), str(cost_tmp_kopt)))
 

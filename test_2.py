@@ -1,16 +1,8 @@
 
 
-cost_of_search = []
-cost_tmp = 0
-cost_tmp_opt = 0
-cost_tmp_kopt = 0
-
-ws1 = [i * 2 for i in range(20)]
+def extract_unique_code(text):
+    # Extracts the unique_code from the sent /start command.
+    return text.split()[1] if len(text.split()) > 1 else None
 
 
-for row_i in range(10):
-    cost_of_search.append('''Прайсов цена - {0} руб. с НДС или {1} EUR Без НДС
-    Оптовая цена - {2} руб. с НДС / Крупнооптовая цена {3} руб. с НДС'''
-                          .format(str(cost_tmp), ws1[row_i + 2], str(cost_tmp_opt),
-                                  str(cost_tmp_kopt)))
-print(cost_of_search)
+print(extract_unique_code('3M™ FS Головка BH3M-NB-BSP с регулируемым байпасом без кронштейна,соединения резьбы BSP внутр 3/8 дюйма (материал - пластик)'))

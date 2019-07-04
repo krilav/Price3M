@@ -1,15 +1,12 @@
-import  datetime
-from datetime import timedelta
+import datetime
 import time
 import math
-import pyowm
 import telebot
 
-
+from datetime import timedelta
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telebot import apihelper
 
-
-owm = pyowm.OWM('7215c81c62b322b41e0aa0eb1843c5d4', language='ru')
 
 port = '7777'
 usernameProxy = 'tg-id415061327'
@@ -21,15 +18,28 @@ apihelper.proxy = {'https': 'socks5://' + usernameProxy + ':' + passwordProxy + 
 # TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk'
 TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"
 
-
 bot = telebot.TeleBot(TOKEN)
 
 
-@bot.message_handler(content_types=["text"])
-def any_msg(message):
-    date_curse = datetime.date.today() - timedelta(1)
+def gen_markup():
+    markup = InlineKeyboardMarkup()
+    markup.row_width = 2
+    markup.add(InlineKeyboardButton("Yes", callback_data="cb_yes"),
+               InlineKeyboardButton("No", callback_data="cb_no"))
+    return markup
 
-    bot.send_message(message.chat.id, '''дата время  :  {} '''.format(date_curse))
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    if call.data == "cb_yes":
+        bot.answer_callback_query(call.id, "Answer is Yes")
+    elif call.data == "cb_no":
+        bot.answer_callback_query(call.id, "Answer is No")
+
+
+@bot.message_handler(func=lambda message: True)
+def message_handler(message):
+    bot.send_message(message.chat.id, "Yes/no?", reply_markup=gen_markup())
 
 
 bot.polling(none_stop=True)
