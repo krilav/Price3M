@@ -88,7 +88,7 @@ def indexing(search='_'):
 file = 'db_1.xlsx'
 wb1 = load_workbook(filename=file)
 ws1 = wb1['price']
-rates = ExchangeRates('2019-06-21', locale_en=True)
+rates = ExchangeRates('2019-07-03', locale_en=True)
 curse_test_eur = rates['EUR'].value
 
 # ws2 = wb1.create_sheet(title='data2')
@@ -97,10 +97,10 @@ search_test = '550 600'
 
 discount = 0.2
 
-# new_data(curse_test_eur)
-print(indexing(search_test)[0][0])
+new_data(curse_test_eur)
+# print(indexing(search_test)[0][0])
 
-print(ws1.max_row)
+# print(ws1.max_row)
 # print(ws1.max_column)
 
 # size_mm_test = []
