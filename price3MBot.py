@@ -12,7 +12,7 @@ usernameProxy = 'tg-id415061327'
 passwordProxy = 'vjzTxv7v'
 addressProxy = '@socksy.seriyps.ru'
 
-apihelper.proxy = {'https': 'socks5://' + usernameProxy + ':' + passwordProxy + addressProxy + ':' + port}
+apihelper.proxy = {'https': f'socks5://{usernameProxy}:{passwordProxy}{addressProxy}:{port}'}
 
 TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk'
 # TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"
@@ -60,9 +60,9 @@ def indexing(search):
             cost_tmp_opt = round(cost_tmp_opt_rub / curse_eur, 2)
             cost_tmp_kopt_rub = round(cost_tmp_rub * 0.71, 2)
             cost_tmp_kopt = round(cost_tmp_kopt_rub / curse_eur, 2)
-            cost_of_search.append('''\n 1. Прайсовая цена  -  {0:<}  руб. с НДС или  {1}  EUR Без НДС
-                \n 2. Оптовая цена  -  {2:>5}  руб. с НДС или  {3}  EUR Без НДС
-                \n 3. Крупнооптовая цена  -  {4}  руб. с НДС или  {5}  EUR Без НД'''
+            cost_of_search.append('''\n 1. Прайсовая цена  -  {0:<}  руб. с НДС или  {1}€  Без НДС
+                \n 2. Оптовая цена  -  {2:>5}  руб. с НДС или  {3}€  Без НДС
+                \n 3. Крупнооптовая цена  -  {4}  руб. с НДС или  {5}€  Без НДC'''
                                   .format(str(cost_tmp_rub), cost_tmp[0], str(cost_tmp_opt_rub),
                                           str(cost_tmp_opt), str(cost_tmp_kopt_rub), str(cost_tmp_kopt)))
 
@@ -79,14 +79,15 @@ def start_help(message):
     if message.text == '/start':
         bot.send_message(message.chat.id, '''Правила поиска по прайсу :
         1. Регистр не учитывается.
-        2. Поиск идет по ключевым словам, которые нужно вводить
-        через пробел. ''')
+        2. Поиск идет по ключевым словам, которые нужно вводить через пробел.
+        3. Основные команды : /start  и /help
+        ''')
     elif message.text == '/help':
         bot.send_message(message.chat.id, '''Типы цен :
         1. Прайсовая цена - цена без скидки.
-        2. Оптовая цена - цена при обороте от 500 € в квартал (-15%)
-        3. Крупнооптовая цена - цена при обороте от 1000 € в квартал (-29%) \n
-         Расчетный курс Евро = {}'''.format(rates['EUR'].value))
+        2. Оптовая цена - цена при обороте от 500€ в квартал (-15%)
+        3. Крупнооптовая цена - цена при обороте от 1000€ в квартал (-29%) \n
+         Расчетный курс € = {}'''.format(rates['EUR'].value))
 
 
 # Поиск по прайсу

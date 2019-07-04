@@ -1,8 +1,10 @@
+port = '7777'
+usernameProxy = 'tg-id415061327'
+passwordProxy = 'vjzTxv7v'
+addressProxy = '@socksy.seriyps.ru'
 
+ap = f'socks5://{usernameProxy}:{passwordProxy}{addressProxy}:{port}'
 
-def extract_unique_code(text):
-    # Extracts the unique_code from the sent /start command.
-    return text.split()[1] if len(text.split()) > 1 else None
+'socks5://' + usernameProxy + ':' + passwordProxy + addressProxy + ':' + port
 
-
-print(extract_unique_code('3M™ FS Головка BH3M-NB-BSP с регулируемым байпасом без кронштейна,соединения резьбы BSP внутр 3/8 дюйма (материал - пластик)'))
+print(ap)
