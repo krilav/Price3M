@@ -1,11 +1,12 @@
 import datetime
+import os
 
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 from pycbrf import ExchangeRates
 import telebot
 from telebot import apihelper
 from datetime import timedelta
-from telebot import types
+# from telebot import types
 
 port = '7777'
 usernameProxy = 'tg-id415061327'
@@ -14,10 +15,20 @@ addressProxy = '@socksy.seriyps.ru'
 
 apihelper.proxy = {'https': f'socks5://{usernameProxy}:{passwordProxy}{addressProxy}:{port}'}
 
-TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk'
-# TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"
+commands = {  # используемые команды
+    'start  ': 'Приветственная информация',
+    'help   ': 'Показать информацию по вариантам команд',
+    'config': 'Конфигурацию бота под пользователя'
+}
+
+TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk' # Price3Mbot
+# TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"  # pogodaDBbot
 
 bot = telebot.TeleBot(TOKEN)
+
+date_of_curse = str(datetime.date.today() - timedelta(1))
+rates = ExchangeRates(date_of_curse, locale_en=True)
+curse_eur_glob = float(rates['EUR'].value)
 
 
 # Поиск по ключам
@@ -27,83 +38,92 @@ def indexing(search):
     file = 'db_1.xlsx'
     wb1 = load_workbook(filename=file)
     ws1 = wb1['price']
-    date_of_search = str(datetime.date.today() - timedelta(1))
-    rates = ExchangeRates(date_of_search, locale_en=True)
 
     # Поиск по ключам
     search = search.lower()
     search = search.split(' ')
 
-    number_of_index = 0
-    name_of_search = []
-    cost_of_search = []
-    status_of_search = []
+    index = 0
+    db_return = []
 
     for row_i in range(ws1.max_row - 1):
         tru_or_not_tru = []
         for search_i in search:
             tru_or_not_tru.append(search_i in ws1['w' + str(row_i + 2)].value)
 
-        if not False in tru_or_not_tru:
-            number_of_index += 1
+        if False in tru_or_not_tru:
+            pass
+        else:
+            index += 1
+            name_of_search = ws1['f' + str(row_i + 2)].value
+            cost_tmp = round(float(ws1['j' + str(row_i + 2)].value), 2)
+            status_of_search = ws1['l' + str(row_i + 2)].value
 
-            if ws1['m' + str(row_i + 2)].value == 'EUR':
-                curse_eur = float(rates['EUR'].value)
-            else:
-                curse_eur = 1
+            db_return_tmp = [index, name_of_search, cost_tmp, status_of_search]
+            db_return.append(db_return_tmp)
 
-            name_of_search.append('№' + str(number_of_index) + '. ' + str(ws1['f' + str(row_i + 2)].value))
-
-            cost_tmp = str(ws1['j' + str(row_i + 2)].value).split(',')
-            cost_tmp_rub = round(float(cost_tmp[0]) * 1.2 * curse_eur, 2)
-            cost_tmp_opt_rub = round(cost_tmp_rub * 0.85, 2)
-            cost_tmp_opt = round(cost_tmp_opt_rub / curse_eur, 2)
-            cost_tmp_kopt_rub = round(cost_tmp_rub * 0.71, 2)
-            cost_tmp_kopt = round(cost_tmp_kopt_rub / curse_eur, 2)
-            cost_of_search.append('''\n 1. Прайсовая цена  -  {0:<}  руб. с НДС или  {1}€  Без НДС
-                \n 2. Оптовая цена  -  {2:>5}  руб. с НДС или  {3}€  Без НДС
-                \n 3. Крупнооптовая цена  -  {4}  руб. с НДС или  {5}€  Без НДC'''
-                                  .format(str(cost_tmp_rub), cost_tmp[0], str(cost_tmp_opt_rub),
-                                          str(cost_tmp_opt), str(cost_tmp_kopt_rub), str(cost_tmp_kopt)))
-
-            status_of_search.append('Статус товара на складе 3М Россия - ' + str(ws1['l' + str(row_i + 2)].value))
-
-    return name_of_search, cost_of_search, status_of_search, number_of_index
+    return db_return
 
 
-# Команды '/start' и '/help'.
-@bot.message_handler(commands=['start', 'help'])
+@bot.message_handler(commands=['help'])
+def command_help(message):
+    help_text = "Возможные команды: \n"
+    for key in commands:
+        help_text += "/" + key + " :  "
+        help_text += commands[key] + "\n"
+    bot.send_message(message.chat.id, help_text)
+
+
+# Команды '/start' и '/config'.
+@bot.message_handler(commands=['start', 'config'])
 def start_help(message):
-    date_of_search = str(datetime.date.today() - timedelta(1))
-    rates = ExchangeRates(date_of_search, locale_en=True)
     if message.text == '/start':
         bot.send_message(message.chat.id, '''Правила поиска по прайсу :
         1. Регистр не учитывается.
         2. Поиск идет по ключевым словам, которые нужно вводить через пробел.
-        3. Основные команды : /start  и /help
         ''')
-    elif message.text == '/help':
-        bot.send_message(message.chat.id, '''Типы цен :
+    elif message.text == '/config':
+        bot.send_message(message.chat.id, f'''Типы цен :
         1. Прайсовая цена - цена без скидки.
         2. Оптовая цена - цена при обороте от 500€ в квартал (-15%)
-        3. Крупнооптовая цена - цена при обороте от 1000€ в квартал (-29%) \n
-         Расчетный курс € = {}'''.format(rates['EUR'].value))
+        3. Крупнооптовая цена - цена при обороте от 1000€ в квартал (-29%)\n
+         Расчетный курс € = {rates['EUR'].value}''')
 
 
 # Поиск по прайсу
 @bot.message_handler(content_types=['text'])
 def send_search_id(message):
     answer = indexing(message.text)
+    file = f'{message.from_user.id}.xlsx'
+    path_data_call = f'..{os.sep}Price3M{os.sep}data_call{os.sep}'
 
-    if answer[3] > 3:
+    if len(answer) > 3:
         bot.send_message(message.chat.id, 'Найдено более 3 наименований')
-    elif answer[3] == 0:
+    elif len(answer) == 0:
         bot.send_message(message.chat.id, 'Не найдено ни одной позиции')
     else:
-        for i in range(len(answer[0])):
-            bot.send_message(message.chat.id, answer[0][i])
-            bot.send_message(message.chat.id, answer[1][i])
-            bot.send_message(message.chat.id, answer[2][i])
+        if file in os.listdir(path_data_call):
+            wb = load_workbook(filename=f'{path_data_call}{file}')
+            ws = wb.active
+        else:
+            wb = Workbook()
+            ws = wb.active
+
+        for answers in answer:
+            ws.append(answers)
+        wb.save(f'{path_data_call}{file}')
+
+        for i in range(len(answer)):
+            cost_send_bot = f'1. Прайсовая цена  -  {round(answer[i][2] * 1.2 * curse_eur_glob, 2)}'
+            cost_send_bot += f'  руб. с НДС или {answer[i][2]}€  Без НДС'
+            cost_send_bot += f'\n2. Оптовая цена  -  {round(answer[i][2] * 1.2 * curse_eur_glob * 0.85, 2)}'
+            cost_send_bot += f'  руб. с НДС или {round(answer[i][2] * 0.85, 2)}€  Без НДС'
+            cost_send_bot += f'\n3. Крупнооптовая цена  -  {round(answer[i][2] * 1.2 * curse_eur_glob * 0.71, 2)}'
+            cost_send_bot += f'  руб. с НДС или {round(answer[i][2] * 0.71, 2)}€  Без НДC'
+
+            bot.send_message(message.chat.id, f'№{answer[i][0]} {answer[i][1]}')
+            bot.send_message(message.chat.id, cost_send_bot)
+            bot.send_message(message.chat.id, f'Статус товара на складе 3М Россия - {answer[i][3]}')
 
     # keyboard = types.InlineKeyboardMarkup()
     # url_button = types.InlineKeyboardButton(text='Перейти на Тэйплайн', url='http://www.tapeline.ru/')

@@ -1,10 +1,18 @@
-port = '7777'
-usernameProxy = 'tg-id415061327'
-passwordProxy = 'vjzTxv7v'
-addressProxy = '@socksy.seriyps.ru'
 
-ap = f'socks5://{usernameProxy}:{passwordProxy}{addressProxy}:{port}'
+a = [1, 2, 4]
 
-'socks5://' + usernameProxy + ':' + passwordProxy + addressProxy + ':' + port
+b = a
 
-print(ap)
+b.append(5)
+
+print(a)
+print(b)
+
+a = "привет"
+b = "привет"
+
+print(a)
+print(b)
+
+print(a == b)
+
