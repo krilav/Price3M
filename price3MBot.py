@@ -1,11 +1,13 @@
 import datetime
 import os
+import sqlite3
 
 from openpyxl import load_workbook, Workbook
 from pycbrf import ExchangeRates
 import telebot
 from telebot import apihelper
 from datetime import timedelta
+
 # from telebot import types
 
 port = '7777'
@@ -13,25 +15,26 @@ usernameProxy = 'tg-id415061327'
 passwordProxy = 'vjzTxv7v'
 addressProxy = '@socksy.seriyps.ru'
 
-apihelper.proxy = {'https': f'socks5://{usernameProxy}:{passwordProxy}{addressProxy}:{port}'}
+apihelper.proxy = {'https': f'socks5://{usernameProxy}:{passwordProxy}{addressProxy}:{port}'}  # обход запрета в РФ
 
-commands = {  # используемые команды
-    'start  ': 'Приветственная информация',
-    'help   ': 'Показать информацию по вариантам команд',
+# используемые команды
+commands = {
+    'start ': 'Приветственная информация',
+    'help  ': 'Показать информацию по вариантам команд',
     'config': 'Конфигурацию бота под пользователя'
 }
 
-TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk' # Price3Mbot
-# TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"  # pogodaDBbot
-
+# TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk' # Price3Mbot
+TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"  # pogodaDBbot
 bot = telebot.TeleBot(TOKEN)
 
+# параметры курса ЦБ
 date_of_curse = str(datetime.date.today() - timedelta(1))
 rates = ExchangeRates(date_of_curse, locale_en=True)
 curse_eur_glob = float(rates['EUR'].value)
 
 
-# Поиск по ключам
+# Поиск по прайсу
 def indexing(search):
     """Поиск нужных позиций."""
 
@@ -65,6 +68,7 @@ def indexing(search):
     return db_return
 
 
+# Команды '/help'.
 @bot.message_handler(commands=['help'])
 def command_help(message):
     help_text = "Возможные команды: \n"
@@ -77,7 +81,32 @@ def command_help(message):
 # Команды '/start' и '/config'.
 @bot.message_handler(commands=['start', 'config'])
 def start_help(message):
+    user_in_db = False
     if message.text == '/start':
+        path_db_users = f'..{os.sep}Price3M{os.sep}db{os.sep}price3m.db'
+        conn = sqlite3.connect(path_db_users)
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM users")
+        users_id = cursor.fetchall()
+
+        for i in users_id:
+            if message.from_user.id in i:
+                user_in_db = True
+                pass
+            else:
+                user_in_db = False
+
+        if user_in_db:
+            pass
+        else:
+            user = [(message.from_user.id, message.from_user.first_name, message.from_user.username,
+                     message.from_user.last_name, message.from_user.language_code, '')
+                    ]
+            cursor.executemany("INSERT INTO users VALUES (?,?,?,?,?,?)", user)
+            conn.commit()
+
+        conn.close()
+
         bot.send_message(message.chat.id, '''Правила поиска по прайсу :
         1. Регистр не учитывается.
         2. Поиск идет по ключевым словам, которые нужно вводить через пробел.
@@ -90,12 +119,21 @@ def start_help(message):
          Расчетный курс € = {rates['EUR'].value}''')
 
 
-# Поиск по прайсу
+# Основная реакция на ввод текста
 @bot.message_handler(content_types=['text'])
 def send_search_id(message):
     answer = indexing(message.text)
+    # путь для exel
     file = f'{message.from_user.id}.xlsx'
     path_data_call = f'..{os.sep}Price3M{os.sep}data_call{os.sep}'
+    # путь для db и запись
+    path_db_users = f'..{os.sep}Price3M{os.sep}db{os.sep}price3m.db'
+    conn = sqlite3.connect(path_db_users)
+    cursor = conn.cursor()
+    cursor.executemany("UPDATE users SET time_request = (?) where id = (?)",
+                       [(str(datetime.datetime.today()), message.from_user.id)]
+                       )
+    conn.commit()
 
     if len(answer) > 3:
         bot.send_message(message.chat.id, 'Найдено более 3 наименований')
@@ -124,11 +162,6 @@ def send_search_id(message):
             bot.send_message(message.chat.id, f'№{answer[i][0]} {answer[i][1]}')
             bot.send_message(message.chat.id, cost_send_bot)
             bot.send_message(message.chat.id, f'Статус товара на складе 3М Россия - {answer[i][3]}')
-
-    # keyboard = types.InlineKeyboardMarkup()
-    # url_button = types.InlineKeyboardButton(text='Перейти на Тэйплайн', url='http://www.tapeline.ru/')
-    # keyboard.add(url_button)
-    # bot.send_message(message.chat.id, 'Дальнейший выбор', reply_markup=keyboard)
 
 
 bot.polling(none_stop=True)

@@ -1,18 +1,11 @@
+import os
+import sqlite3
 
-a = [1, 2, 4]
 
-b = a
+path_db_users = f'..{os.sep}Price3M{os.sep}db{os.sep}price3m.db'
+conn = sqlite3.connect(path_db_users)
+cursor = conn.cursor()
+cursor.execute("SELECT count_request FROM users where id=415061327")
+users_id = cursor.fetchall()
 
-b.append(5)
-
-print(a)
-print(b)
-
-a = "привет"
-b = "привет"
-
-print(a)
-print(b)
-
-print(a == b)
-
+print(users_id)
