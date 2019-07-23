@@ -24,8 +24,8 @@ commands = {
     'config': 'Конфигурацию бота под пользователя'
 }
 
-# TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk' # Price3Mbot
-TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"  # pogodaDBbot
+TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk' # Price3Mbot
+# TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"  # pogodaDBbot
 bot = telebot.TeleBot(TOKEN)
 
 # параметры курса ЦБ
