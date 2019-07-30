@@ -1,0 +1,6 @@
+runtime: python
+env: flex
+entrypoint: gunicorn -b :$PORT price3MBot:app
+
+runtime_congig:
+    python_version: 3
