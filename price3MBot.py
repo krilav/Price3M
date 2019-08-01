@@ -124,8 +124,8 @@ def start_help(message):
 def send_search_id(message):
     answer = indexing(message.text)
     # путь для exel
-    file = f'{message.from_user.id}.xlsx'
-    path_data_call = f'..{os.sep}Price3M{os.sep}data_call{os.sep}'
+    # file = f'{message.from_user.id}.xlsx'
+    # path_data_call = f'..{os.sep}Price3M{os.sep}data_call{os.sep}'
     # путь для db и запись
     #    path_db_users = f'..{os.sep}Price3M{os.sep}db{os.sep}price3m.db'
     #    conn = sqlite3.connect(path_db_users)
