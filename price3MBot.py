@@ -1,6 +1,6 @@
 import datetime
 import os
-import sqlite3
+# import sqlite3
 
 from openpyxl import load_workbook, Workbook
 from pycbrf import ExchangeRates
@@ -24,7 +24,7 @@ commands = {
     'config': 'Конфигурацию бота под пользователя'
 }
 
-TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk' # Price3Mbot
+TOKEN = '638610225:AAEoPelXhzUC11J11x8L9bBHbjoGPKj9zXk'  # Price3Mbot
 # TOKEN = "842039603:AAFy4Cd_mWZSyjFEQGcUgI0uYP87ZrQy1pQ"  # pogodaDBbot
 bot = telebot.TeleBot(TOKEN)
 
@@ -83,29 +83,29 @@ def command_help(message):
 def start_help(message):
     user_in_db = False
     if message.text == '/start':
-        path_db_users = f'..{os.sep}Price3M{os.sep}db{os.sep}price3m.db'
-        conn = sqlite3.connect(path_db_users)
-        cursor = conn.cursor()
-        cursor.execute("SELECT id FROM users")
-        users_id = cursor.fetchall()
+        #        path_db_users = f'..{os.sep}Price3M{os.sep}db{os.sep}price3m.db'
+        #        conn = sqlite3.connect(path_db_users)
+        #        cursor = conn.cursor()
+        #        cursor.execute("SELECT id FROM users")
+        #        users_id = cursor.fetchall()
 
-        for i in users_id:
-            if message.from_user.id in i:
-                user_in_db = True
-                pass
-            else:
-                user_in_db = False
+        #        for i in users_id:
+        #            if message.from_user.id in i:
+        #                user_in_db = True
+        #                pass
+        #            else:
+        #                user_in_db = False
 
-        if user_in_db:
-            pass
-        else:
-            user = [(message.from_user.id, message.from_user.first_name, message.from_user.username,
-                     message.from_user.last_name, message.from_user.language_code, '')
-                    ]
-            cursor.executemany("INSERT INTO users VALUES (?,?,?,?,?,?)", user)
-            conn.commit()
+        #        if user_in_db:
+        #            pass
+        #        else:
+        #            user = [(message.from_user.id, message.from_user.first_name, message.from_user.username,
+        #                     message.from_user.last_name, message.from_user.language_code, '')
+        #                    ]
+        #            cursor.executemany("INSERT INTO users VALUES (?,?,?,?,?,?)", user)
+        #            conn.commit()
 
-        conn.close()
+        #        conn.close()
 
         bot.send_message(message.chat.id, '''Правила поиска по прайсу :
         1. Регистр не учитывается.
@@ -127,13 +127,13 @@ def send_search_id(message):
     file = f'{message.from_user.id}.xlsx'
     path_data_call = f'..{os.sep}Price3M{os.sep}data_call{os.sep}'
     # путь для db и запись
-    path_db_users = f'..{os.sep}Price3M{os.sep}db{os.sep}price3m.db'
-    conn = sqlite3.connect(path_db_users)
-    cursor = conn.cursor()
-    cursor.executemany("UPDATE users SET time_request = (?) where id = (?)",
-                       [(str(datetime.datetime.today()), message.from_user.id)]
-                       )
-    conn.commit()
+    #    path_db_users = f'..{os.sep}Price3M{os.sep}db{os.sep}price3m.db'
+    #    conn = sqlite3.connect(path_db_users)
+    #    cursor = conn.cursor()
+    #    cursor.executemany("UPDATE users SET time_request = (?) where id = (?)",
+    #                       [(str(datetime.datetime.today()), message.from_user.id)]
+    #                       )
+    #    conn.commit()
 
     if len(answer) > 3:
         bot.send_message(message.chat.id, 'Найдено более 3 наименований')
