@@ -1,5 +1,5 @@
 import datetime
-import os
+# import os
 # import sqlite3
 
 from openpyxl import load_workbook, Workbook
@@ -81,7 +81,7 @@ def command_help(message):
 # Команды '/start' и '/config'.
 @bot.message_handler(commands=['start', 'config'])
 def start_help(message):
-    user_in_db = False
+    # user_in_db = False
     if message.text == '/start':
         #        path_db_users = f'..{os.sep}Price3M{os.sep}db{os.sep}price3m.db'
         #        conn = sqlite3.connect(path_db_users)
@@ -134,22 +134,22 @@ def send_search_id(message):
     #                       [(str(datetime.datetime.today()), message.from_user.id)]
     #                       )
     #    conn.commit()
-
+    
     if len(answer) > 3:
         bot.send_message(message.chat.id, 'Найдено более 3 наименований')
     elif len(answer) == 0:
         bot.send_message(message.chat.id, 'Не найдено ни одной позиции')
-    # else:
-    #    if file in os.listdir(path_data_call):
-    #        wb = load_workbook(filename=f'{path_data_call}{file}')
-    #        ws = wb.active
-    #    else:
-    #        wb = Workbook()
-    #        ws = wb.active
+    else:
+        #    if file in os.listdir(path_data_call):
+        #        wb = load_workbook(filename=f'{path_data_call}{file}')
+        #        ws = wb.active
+        #    else:
+        #        wb = Workbook()
+        #        ws = wb.active
 
-    #    for answers in answer:
-    #        ws.append(answers)
-    #    wb.save(f'{path_data_call}{file}')
+        #    for answers in answer:
+        #        ws.append(answers)
+        #    wb.save(f'{path_data_call}{file}')
 
         for i in range(len(answer)):
             cost_send_bot = f'1. Прайсовая цена  -  {round(answer[i][2] * 1.2 * curse_eur_glob, 2)}'
